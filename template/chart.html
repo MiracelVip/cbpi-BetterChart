@@ -19,14 +19,17 @@
         </div>
     </div>
 
+    
 <script type="text/javascript">
   g2 = new Dygraph(
     document.getElementById("graphdiv"),
          [
-            {% for row in data %} [new Date("{{row[0]}}"), {{row[1]}}], {% endfor %}
+            {% for r in data|sort %} [new Date("{{r}}"),{{data[r][0] or "null"}},{{data[r][1] or "null"}}, ],
+            {% endfor %}
               ],
               {
-                labels: ['Date', 'X'],
+                connectSeparatedPoints: true,
+                labels: ['Date', 'Setpoint', 'Sensor'],
                 legend: 'always',
                 animatedZooms: true,
                 axis : {
