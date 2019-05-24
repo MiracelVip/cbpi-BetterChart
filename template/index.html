@@ -53,7 +53,7 @@
                             {% if config[c]['type']=='kettle' %}    <i class="fas fa-fw fa-glass-whiskey"></i>      {% endif %}
                             {% if config[c]['type']=='fermenter' %} <i class="fas fa-fw fa-snowflake"></i>          {% endif %}
                             {% if config[c]['type']=='sensor' %}    <i class="fas fa-fw fa-temperature-high"></i>   {% endif %}
-                            <span>{{config[c]['name']}}</span>
+                            <span>{{config[c]['name'].decode("utf-8")}}</span>
                         </a>
                     </li>
                 {% endfor %}
@@ -62,7 +62,7 @@
             <div id="content-wrapper">
                 <div class="container-fluid">
                     <!-- Page Content -->
-                    <h1>{{title}}</h1>
+                    <h1>{{title.decode("utf-8")}}</h1>
                     <hr>
                     {% block content %}
                         <div class="row">
@@ -77,7 +77,7 @@
                                                 {% if config[c]['type']=='fermenter' %} <i class="fas fa-fw fa-snowflake"></i>          {% endif %}
                                                 {% if config[c]['type']=='sensor' %}    <i class="fas fa-fw fa-temperature-high"></i>   {% endif %}
                                             </div>
-                                            <div class="mr-5">{{config[c]['name']}}</div>
+                                            <div class="mr-5">{{config[c]['name'].decode("utf-8")}}</div>
                                         </div>
                                         <a class="card-footer text-white clearfix small z-1" href="/BetterChart/chart/{{c}}">
                                             <span class="float-left">View Chart</span>

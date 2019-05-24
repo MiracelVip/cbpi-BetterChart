@@ -40,7 +40,7 @@ def read_config():
         config[len(config)]={
             'DB-ID': int(r[0]),
             'type': 'kettle',
-            'name': str(r[1]),
+            'name': r[1].encode("utf-8"),
             'sensor': [r[2]]}
     
     sql = "SELECT * from fermenter"
@@ -49,7 +49,7 @@ def read_config():
         config[len(config)]={
             'DB-ID': int(r[0]),
             'type': 'fermenter',
-            'name': str(r[1]),
+            'name': r[1].encode("utf-8"),
             'sensor': [r[3], r[4], r[5]]}
 
     sql = "SELECT * from sensor"
@@ -58,7 +58,7 @@ def read_config():
         config[len(config)]={
             'DB-ID': int(r[0]),
             'type': 'sensor',
-            'name': str(r[2])}
+            'name': r[2].encode("utf-8")}
 
         
     for x in range(len(config)):
