@@ -32,20 +32,39 @@ def connection (task, sql):
         return None
 
 def read_config():
+    config = {}
+
     sql = "SELECT * from kettle"
-    kettle = connection("r", sql)
-    sql = "SELECT * from fermenter"
-    fermenter = connection("r", sql)
-    pair=[]
+    result = connection("r", sql)
+    for r in result:
+        config[len(config)]={
+            'DB-ID': int(r[0]),
+            'type': 'kettle',
+            'name': str(r[1]),
+            'sensor': [r[2]]}
     
-    for k in kettle:
-        pair.append(['k', str(k[0]), k[1], k[2]])
-     
-    for f in fermenter:
-        pair.append(['f', str(f[0]), f[1], f[3], f[4], f[5]])
+    sql = "SELECT * from fermenter"
+    result = connection("r", sql)
+    for r in result:
+        config[len(config)]={
+            'DB-ID': int(r[0]),
+            'type': 'fermenter',
+            'name': str(r[1]),
+            'sensor': [r[3], r[4], r[5]]}
+
+    sql = "SELECT * from sensor"
+    result = connection("r", sql)
+    for r in result:
+        config[len(config)]={
+            'DB-ID': int(r[0]),
+            'type': 'sensor',
+            'name': str(r[2])}
+
         
-    #print (pair)
-    return pair
+    for x in range(len(config)):
+        print(config[x])
+        
+    return config
 
 
 def read_log_file (filenames):
@@ -53,7 +72,7 @@ def read_log_file (filenames):
     level = 0
     for filename in filenames:
         data_raw = []
-        with open('./logs/'+filename) as file:
+        with open('./logs/'+filename+'.log') as file:
             csvReader = csv.reader(file)
             for row in csvReader:
                 data_raw.append(row)
@@ -74,15 +93,16 @@ def read_log_file (filenames):
             #print(data_raw)
             
             for row in data_raw:
-                # Convert the Date to object
-                date = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
-                value = row[1]
+                if row[1] != 'None':
+                    # Convert the Date to object
+                    date = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
+                    value = row[1]
 
-                try:
-                   data[date][level] = float(value)
-                except:
-                    data[date] = {}
-                    data[date][level] = float(value)
+                    try:
+                       data[date][level] = float(value)
+                    except:
+                        data[date] = {}
+                        data[date][level] = float(value)
                 
                 
                 
@@ -98,34 +118,22 @@ BetterChart = Blueprint('BetterChart',
 
 @BetterChart.route('/', methods=['GET'])
 def start():
+    return render_template('index.html', config = read_config(), title="Dashboard")
+
+@BetterChart.route('/chart/<int:id>', methods=['GET'])
+def chart(id):
     config = read_config()
     
-    return render_template('BetterChart.html', config = config)
-
-@BetterChart.route('/<type>/<id>', methods=['GET'])
-def chart2(type, id):
-    config = read_config()
-    for c in config:
-        if c[0] == type and c[1] == id:
-            select = c
-            break
+    # Prepare the list of Logfiles to read
+    logs_to_read = [str(config[id]['type'])+'_'+str(config[id]['DB-ID'])]
+    try:
+        for sensor in config[id]['sensor']:
+            logs_to_read.append('sensor_'+str(sensor))
+    except:
+        pass
     
-    if select[0] == 'k':
-        read = ["kettle_"+select[1]+".log", "sensor_"+select[3]+".log"]
-        
-        data=read_log_file(read)
-        return render_template('chart.html', log = select[2], data = data, config = config)
-        
-    if select[0] == 'f':
-        read = ["fermenter_"+select[1]+".log", "sensor_"+select[3]+".log"]
-        
-        data=read_log_file(read)
-        return render_template('chart.html', log = select[2], data = data, config = config)
-        
-
-
-
-
+    data = read_log_file(logs_to_read)
+    return render_template('chart.html', data = data, config = config, title=config[id]['name'])
 
 @cbpi.initalizer()
 def init(cbpi):
