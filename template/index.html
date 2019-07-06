@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="author" content="MiracelVip">
-        <title>BetterChart v1.0</title>
+        <title>BetterChart</title>
 
         <!-- Custom fonts for this template-->
         <link rel="stylesheet" href="{{ url_for('BetterChart.static', filename='vendor/fontawesome-free/css/all.min.css') }}">
@@ -18,7 +18,7 @@
     <body id="page-top">
 
         <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
-            <a class="navbar-brand mr-1" href="index.html">BetterChart v1.0</a>´
+            <a class="navbar-brand mr-1" href="index.html">BetterChart v1.1</a>´
             <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
                 <i class="fas fa-bars"></i>
             </button>
@@ -41,7 +41,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/BetterChart">
+                    <a class="nav-link" href="/BetterChart/settings">
                         <i class="fas fa-fw fa-cog"></i>
                         <span>Settings</span>
                     </a>
@@ -67,6 +67,7 @@
                     {% block content %}
                         <div class="row">
                             {% for c in config %}
+                            
                                 <div class="col-xl-3 col-sm-6 mb-3">
                                     {% if config[c]['type']=='kettle' %}    <div class="card text-white bg-danger o-hidden h-100">  {%endif %}
                                     {% if config[c]['type']=='fermenter' %} <div class="card text-white bg-primary o-hidden h-100"> {%endif %}
